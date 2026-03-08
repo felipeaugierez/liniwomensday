@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A small surprise 💐</title>
+
+<style>
+
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#ffe3f0,#ffd4e6);
+font-family:Arial, sans-serif;
+overflow:hidden;
+text-align:center;
+}
+
+.container{
+max-width:420px;
+padding:20px;
+}
+
+h1{
+color:#c72c72;
+}
+
+.scene{
+height:420px;
+display:flex;
+align-items:center;
+justify-content:center;
+perspective:1200px;
+}
+
+#bouquet{
+width:320px;
+cursor:pointer;
+transform:
+translateY(40px)
+translateZ(-500px)
+scale(0.25)
+rotateX(10deg);
+transition:transform .6s ease, filter .6s ease;
+filter:drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+}
+
+.counter{
+margin-top:10px;
+font-weight:bold;
+color:#b03168;
+}
+
+.message{
+margin-top:25px;
+padding:20px;
+background:white;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+opacity:0;
+transform:translateY(20px);
+transition:all .6s ease;
+}
+
+.message.show{
+opacity:1;
+transform:translateY(0);
+}
+
+.sparkle{
+position:absolute;
+font-size:24px;
+animation:float 1.2s forwards;
+}
+
+@keyframes float{
+0%{opacity:0; transform:translateY(10px) scale(.6);}
+30%{opacity:1;}
+100%{opacity:0; transform:translateY(-80px) scale(1.3);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>I wanted to give you something 💐</h1>
+
+<div class="scene" id="scene">
+<img id="bouquet" src="bouquet.png">
+</div>
+
+<div class="counter" id="counter">0 / 10</div>
+
+<div class="message" id="message">
+<h2>For You ❤️</h2>
+<p>These flowers are for you.<br>I hope they make you smile.</p>
+</div>
+
+</div>
+
+<script>
+
+let clicks = 0
+const total = 10
+
+const bouquet = document.getElementById("bouquet")
+const counter = document.getElementById("counter")
+const message = document.getElementById("message")
+const scene = document.getElementById("scene")
+
+function lerp(a,b,t){
+return a+(b-a)*t
+}
+
+bouquet.addEventListener("click", ()=>{
+
+if(clicks>=total) return
+
+clicks++
+
+const progress = clicks/total
+
+const scale = lerp(.25,1.1,progress)
+const z = lerp(-500,0,progress)
+const y = lerp(40,0,progress)
+const tilt = lerp(10,0,progress)
+
+bouquet.style.transform =
+`translateY(${y}px) translateZ(${z}px) scale(${scale}) rotateX(${tilt}deg)`
+
+counter.textContent = clicks+" / "+total
+
+createSparkles()
+
+if(clicks===total){
+message.classList.add("show")
+burst()
+}
+
+})
+
+function createSparkles(){
+
+const emojis=["🌸","✨","💖"]
+
+for(let i=0;i<2;i++){
+
+const s=document.createElement("div")
+s.className="sparkle"
+s.innerHTML=emojis[Math.floor(Math.random()*emojis.length)]
+
+s.style.left="50%"
+s.style.top="60%"
+
+scene.appendChild(s)
+
+setTimeout(()=>s.remove(),1200)
+
+}
+
+}
+
+function burst(){
+
+for(let i=0;i<20;i++){
+setTimeout(createSparkles,i*60)
+}
+
+}
+
+</script>
+
+</body>
+</html>
